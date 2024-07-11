@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~>5.0"
-    }
-  }
-  backend "consul" {
-    address = "localhost:8500"
-    scheme  = "http"
-    path    = "localstack-aws"
-  }
-}
-
 provider "aws" {
   access_key                  = "test"
   secret_key                  = "test"
@@ -49,32 +35,14 @@ provider "aws" {
   }
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-20170727"]
-  }
-
-  filter {
-    name = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+variable "bucket_prefix" {
+  type = string
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+resource "aws_s3_bucket" "bucket" {
+  bucket = "${var.bucket_prefix}-bucket"
+}
 
-  tags = {
-    Name = "HelloWorld"
-  }
-
-  # the new added content when you deploy next time
-  #provisioner "local-exec" {
-  #  command = "sleep 1000"
-  #}
+output "bucket_name" {
+  value = aws_s3_bucket.bucket.bucket
 }

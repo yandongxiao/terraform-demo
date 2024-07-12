@@ -50,6 +50,7 @@ variable "image_id" {
   # 将 nullable 设置为 false 可确保变量值在模块内永远不会为空。如果 nullable 为 false 并且输入变量定义有默认值，则
   # 当模块输入参数为 null 时，Terraform 将使用默认值。
   nullable = false
+  default  = "ami-12345"
 }
 
 variable "availability_zone_names" {
